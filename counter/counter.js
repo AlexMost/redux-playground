@@ -1,7 +1,8 @@
 import React from 'react';
+import {createMailbox} from '../redux-signal';
 
-export const signals = (stream) => {
-  const delayedInc = stream
+export const counterMailbox = createMailbox((signal) => {
+  const delayedInc = signal
     .filter(({type}) => type === 'inc')
     .delay(1000)
     .map(({id}) => {
@@ -9,7 +10,7 @@ export const signals = (stream) => {
     })
 
   return [delayedInc]
-}
+});
 
 export const counterReducer = (state, action) => {
   if(action.id !== state.id) {
@@ -31,7 +32,7 @@ export const CounterView = ({value, onInc, onDec, signal}) => (
      <h1>{value.count}</h1>
      <button onClick={onInc}>+</button>
      <button onClick={onDec}>-</button>
-     <button onClick={() => signal.onNext({id: value.id, type: "inc"})}>
+     <button onClick={() => counterMailbox.send({id: value.id, type: "inc"})}>
       +++
      </button>
    </li>

@@ -1,7 +1,16 @@
 import React from 'react';
-import {counterReducer, CounterView, signals} from './counter';
+import {counterReducer, CounterView, counterMailbox} from './counter';
+import {composeMailboxes, createMailbox} from '../redux-signal';
 
-export const listSignals = (stream) => signals(stream);
+const mailbox = createMailbox((signal) => {
+  const addSlow = signal
+    .filter(({type}) => type === 'add_slow')
+    .delay(1000)
+    .map(() => ({type: 'add'}));
+  return [addSlow]
+});
+
+export const listMailbox = composeMailboxes(counterMailbox, mailbox)
 
 let id = 0;
 
@@ -15,13 +24,12 @@ export const counterListReducer = (state = [], action) => {
   }
 };
 
-export const CounterListView = ({counters, dispatch, signal}) => (
+export const CounterListView = ({counters, dispatch}) => (
   <div>
     <ul>
       {counters.map((c) => (
         <CounterView
           key={c.id}
-          signal={signal}
           value={c}
           onInc={() => dispatch({type: 'incr', id: c.id})}
           onDec={() => dispatch({type: 'decr', id: c.id})}
@@ -29,5 +37,6 @@ export const CounterListView = ({counters, dispatch, signal}) => (
       ))}
     </ul>
     <button onClick={() => dispatch({type: 'add'})}>Add</button>
+    <button onClick={() => mailbox.send({type: 'add_slow'})}>Add Slow</button>
   </div>
 );
