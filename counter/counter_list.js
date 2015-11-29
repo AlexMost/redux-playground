@@ -1,5 +1,7 @@
 import React from 'react';
-import {counterReducer, CounterView} from './counter';
+import {counterReducer, CounterView, signals} from './counter';
+
+export const listSignals = (stream) => signals(stream);
 
 let id = 0;
 
@@ -13,21 +15,19 @@ export const counterListReducer = (state = [], action) => {
   }
 };
 
-export const CounterListView = ({counters, store}) => (
+export const CounterListView = ({counters, dispatch, signal}) => (
   <div>
     <ul>
       {counters.map((c) => (
         <CounterView
           key={c.id}
+          signal={signal}
           value={c}
-          onInc={() => store.dispatch({type: 'incr', id: c.id})}
-          onDec={() => store.dispatch({type: 'decr', id: c.id})}
+          onInc={() => dispatch({type: 'incr', id: c.id})}
+          onDec={() => dispatch({type: 'decr', id: c.id})}
         />
       ))}
     </ul>
-    <button onClick={() => store.dispatch({type: 'add'})}>Add</button>
+    <button onClick={() => dispatch({type: 'add'})}>Add</button>
   </div>
 );
-
-
-

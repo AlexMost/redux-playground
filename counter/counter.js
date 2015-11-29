@@ -1,5 +1,15 @@
 import React from 'react';
 
+export const signals = (stream) => {
+  const delayedInc = stream
+    .filter(({type}) => type === 'inc')
+    .delay(1000)
+    .map(({id}) => {
+      return {type: 'incr', id}
+    })
+
+  return [delayedInc]
+}
 
 export const counterReducer = (state, action) => {
   if(action.id !== state.id) {
@@ -16,11 +26,14 @@ export const counterReducer = (state, action) => {
   }
 };
 
-export const CounterView = ({value, onInc, onDec}) => (
+export const CounterView = ({value, onInc, onDec, signal}) => (
    <li>
      <h1>{value.count}</h1>
      <button onClick={onInc}>+</button>
      <button onClick={onDec}>-</button>
+     <button onClick={() => signal.onNext({id: value.id, type: "inc"})}>
+      +++
+     </button>
    </li>
 );
 
