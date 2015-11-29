@@ -7,7 +7,7 @@ function flatten(arr) {
   }, []);
 }
 
-export const createMailbox = (signalInit) => {
+export const createMailbox = (signalGraphInit) => {
 	const signalID = uuid();
 	let subject;
 
@@ -15,7 +15,7 @@ export const createMailbox = (signalInit) => {
 		subject = signal;
 		const filteredSignal = signal
 			.filter(({_signalID}) => _signalID === signalID)
-		return signalInit(filteredSignal);
+		return signalGraphInit(filteredSignal);
 	}
 
 	const send = (message) => {
