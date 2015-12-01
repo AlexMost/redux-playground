@@ -1,13 +1,11 @@
 import React from 'react';
-import {createMailbox} from '../redux-signal';
+import {initActionStream} from '../redux-signal';
 
-export const counterMailbox = createMailbox((signal) => {
+export const counterMailbox = initActionStream((signal) => {
   const delayedInc = signal
     .filter(({type}) => type === 'inc')
     .delay(1000)
-    .map(({id}) => {
-      return {type: 'incr', id}
-    })
+    .map(({id}) => ({type: 'incr', id}))
 
   return [delayedInc]
 });

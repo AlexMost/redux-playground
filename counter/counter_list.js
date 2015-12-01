@@ -1,8 +1,8 @@
 import React from 'react';
 import {counterReducer, CounterView, counterMailbox} from './counter';
-import {composeMailboxes, createMailbox} from '../redux-signal';
+import {mergeActionStreams, initActionStream} from '../redux-signal';
 
-const mailbox = createMailbox((signal) => {
+const mailbox = initActionStream((signal) => {
   const addSlow = signal
     .filter(({type}) => type === 'add_slow')
     .delay(1000)
@@ -10,7 +10,7 @@ const mailbox = createMailbox((signal) => {
   return [addSlow]
 });
 
-export const listMailbox = composeMailboxes(counterMailbox, mailbox)
+export const listMailbox = mergeActionStreams(counterMailbox, mailbox)
 
 let id = 0;
 
@@ -31,6 +31,7 @@ export const CounterListView = ({counters, dispatch}) => (
         <CounterView
           key={c.id}
           value={c}
+          dispatch={dispatch}
           onInc={() => dispatch({type: 'incr', id: c.id})}
           onDec={() => dispatch({type: 'decr', id: c.id})}
         />

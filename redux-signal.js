@@ -7,7 +7,7 @@ function flatten(arr) {
   }, []);
 }
 
-export const createMailbox = (signalGraphInit) => {
+export const initActionStream = (signalGraphInit) => {
 	const signalID = uuid();
 	let subject;
 
@@ -25,11 +25,11 @@ export const createMailbox = (signalGraphInit) => {
 	return {init, send}
 }
 
-export const composeMailboxes = (...mailboxes) => {
+export const mergeActionStreams = (...mailboxes) => {
 	return mailboxes;
 }
 
-export const createSignalGraph = (...mailboxes) => {
+export const createActionStream = (...mailboxes) => {
 	const subject = new Rx.Subject();
 	const signals = Rx.Observable.merge(
 		flatten(flatten(mailboxes).map((mailbox) => mailbox.init(subject))));
